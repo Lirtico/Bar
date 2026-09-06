@@ -43,14 +43,8 @@ if('caches' in window){caches.delete('filez-v1');caches.delete('filez-v2');}
 }
 
 *{box-sizing:border-box;}
-html{
-  height:100%;
-  overflow-x:hidden;
-  scroll-behavior:smooth;
-  -webkit-text-size-adjust:100%;
-  text-size-adjust:100%;
-}
 html,body{height:100%;overflow-x:hidden;}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;text-size-adjust:100%;}
 body{
   margin:0;
   background:var(--void);
@@ -547,8 +541,7 @@ button{font-family:inherit;}
     max-width: none;
     display: grid;
     grid-template-columns: 1fr;
-    grid-auto-rows: auto;
-    grid-template-rows: none;
+    grid-template-rows: repeat(4, 1fr);
     gap: 12px;
     padding: 70px 12px 110px;
     margin: 0;
@@ -557,16 +550,6 @@ button{font-family:inherit;}
     min-height: 0;
     z-index: 20;
     opacity: 1;
-    -webkit-overflow-scrolling: touch;
-    overscroll-behavior-y: contain;
-  }
-  .panel-card{
-    height: auto;
-    min-height: 0;
-  }
-  .panel-thumb{
-    aspect-ratio: 16/9;
-    max-height: 220px;
   }
   #btn-vermas{
     bottom:16px !important;
@@ -579,8 +562,6 @@ button{font-family:inherit;}
     overflow-y: auto;
     height: auto;
     min-height: 100%;
-    -webkit-overflow-scrolling: touch;
-    overscroll-behavior-y: contain;
   }
   #desktop {
     position:relative;
@@ -589,7 +570,6 @@ button{font-family:inherit;}
     min-height:100vh;
     height:auto;
     overflow:visible;
-    -webkit-overflow-scrolling: touch;
   }
   /* Mobile: windows should not block taps on panel cards */
   .win{
@@ -878,8 +858,9 @@ button{font-family:inherit;}
 
   <div id="windows-layer"></div>
   <div class="dock-ghost" id="dock-ghost"></div>
+</div>
 
-  <!-- VER MAS MODAL -->
+  <!-- VER MAS MODAL (fuera de #desktop para que position:fixed funcione en movil) -->
   <div id="vermas-overlay" style="display:none; position:fixed; inset:0; z-index:100; background:rgba(5,4,6,0.85); backdrop-filter:blur(6px); align-items:center; justify-content:center;">
     <div class="notched" style="background:var(--panel-glass-strong); border:1px solid var(--line-strong); box-shadow:0 30px 80px -20px rgba(255,20,40,.25), 0 0 60px -10px rgba(255,20,40,.1); padding:34px 32px 28px; max-width:400px; width:90%; text-align:center; animation:card-in .5s var(--ease);">
       <div style="font-family:var(--font-display); font-size:16px; font-weight:700; color:var(--text-1); margin-bottom:10px; letter-spacing:.04em;">Instala nuestra app</div>
@@ -890,7 +871,6 @@ button{font-family:inherit;}
       </div>
     </div>
   </div>
-</div>
 
   <div id="toast-layer"></div>
 
@@ -1765,7 +1745,7 @@ window.closeVerMasModal = function(){
 window.installVerMasApp = function(e){
   if(e) e.preventDefault();
   const a = document.createElement('a');
-  a.href = '/prueba%20app.apk';
+  a.href = 'prueba%20app.apk';
   a.download = 'prueba app.apk';
   document.body.appendChild(a);
   a.click();
@@ -2237,7 +2217,7 @@ if (panelsGrid) {
       if(e) e.preventDefault();
       if (e) e.stopPropagation();
       const a = document.createElement('a');
-      a.href = '/prueba%20app.apk';
+      a.href = 'prueba%20app.apk';
       a.download = 'prueba app.apk';
       document.body.appendChild(a);
       a.click();
