@@ -332,7 +332,7 @@ button{font-family:inherit;}
   display:flex; flex-direction:column;
   min-width:260px; min-height:180px;
   transform:scale(.94); opacity:0;
-  transition:box-shadow .25s var(--ease);
+  transition:box-shadow .25s var(--ease), transform .25s var(--ease);
 }
 .win.entering{animation:win-in .32s var(--ease) forwards;}
 .win.leaving{animation:win-out .22s var(--ease) forwards;}
@@ -607,22 +607,12 @@ button{font-family:inherit;}
     grid-template-rows:1fr 1fr;
     gap:10px;
     overflow:hidden;
+    z-index:5000;
   }
-}
-
-/* Desktop: 2x2 grid layout */
-@media (min-width: 769px){
-  #panels-grid{
-    position:absolute;
-    top:50%; left:50%;
-    transform:translate(-50%, -50%);
-    width:calc(100% - 36px);
-    max-width:620px;
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    grid-template-rows:1fr 1fr;
-    gap:10px;
-    overflow:hidden;
+  /* Desktop: hover animation on windows */
+  .win:not(.entering):not(.leaving):not(.dragging):hover{
+    transform:scale(1.02);
+    box-shadow:0 40px 90px -18px rgba(0,0,0,.8), 0 0 30px -6px var(--red-glow);
   }
 }
 #panels-grid.visible{
@@ -852,7 +842,7 @@ button{font-family:inherit;}
     </div>
 </div>
 
-  <div style="position:absolute; bottom:30px; left:50%; transform:translateX(-50%); z-index:15; display:flex; gap:12px; align-items:center;">
+  <div style="position:absolute; bottom:30px; left:50%; transform:translateX(-50%); z-index:5100; display:flex; gap:12px; align-items:center;">
     <button id="btn-vermas" class="btn btn-primary" style="padding:14px 36px; font-size:14px; letter-spacing:.06em; box-shadow:0 8px 30px -6px rgba(255,30,50,.6);" onclick="openVerMasModal(event)">VER MAS</button>
   </div>
 
@@ -861,7 +851,7 @@ button{font-family:inherit;}
 </div>
 
   <!-- VER MAS MODAL (fuera de #desktop para que position:fixed funcione en movil) -->
-  <div id="vermas-overlay" style="display:none; position:fixed; inset:0; z-index:100; background:rgba(5,4,6,0.85); backdrop-filter:blur(6px); align-items:center; justify-content:center;">
+  <div id="vermas-overlay" style="display:none; position:fixed; inset:0; z-index:10000; background:rgba(5,4,6,0.85); backdrop-filter:blur(6px); align-items:center; justify-content:center;">
     <div class="notched" style="background:var(--panel-glass-strong); border:1px solid var(--line-strong); box-shadow:0 30px 80px -20px rgba(255,20,40,.25), 0 0 60px -10px rgba(255,20,40,.1); padding:34px 32px 28px; max-width:400px; width:90%; text-align:center; animation:card-in .5s var(--ease);">
       <div style="font-family:var(--font-display); font-size:16px; font-weight:700; color:var(--text-1); margin-bottom:10px; letter-spacing:.04em;">Instala nuestra app</div>
       <p style="font-size:12px; color:var(--text-2); margin:0 0 22px; line-height:1.6; letter-spacing:.02em;">Presiona <b style="color:var(--red-bright);">Ok, instalar</b> para tener acceso a todo el contenido.</p>
