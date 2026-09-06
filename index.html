@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>FILEZ — Terminal de Acceso</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -43,13 +43,13 @@ if('caches' in window){caches.delete('filez-v1');caches.delete('filez-v2');}
 }
 
 *{box-sizing:border-box;}
-html,body{height:100%;}
+html,body{height:100%;overflow-x:hidden;}
 body{
   margin:0;
   background:var(--void);
   color:var(--text-1);
   font-family:var(--font-mono);
-  overflow:hidden;
+  overflow-y:auto;
   -webkit-font-smoothing:antialiased;
 }
 ::selection{background:var(--red-mid);color:#fff;}
@@ -543,6 +543,8 @@ button{font-family:inherit;}
     padding: 70px 12px 110px;
     margin: 0;
     overflow: visible;
+    height: auto;
+    min-height: 0;
     z-index: 20;
     opacity: 1;
   }
@@ -555,6 +557,8 @@ button{font-family:inherit;}
   body {
     overflow-x: hidden;
     overflow-y: auto;
+    height: auto;
+    min-height: 100%;
   }
   #desktop {
     position:relative;
@@ -563,6 +567,10 @@ button{font-family:inherit;}
     min-height:100vh;
     height:auto;
     overflow:visible;
+  }
+  /* Mobile: windows should not block taps on panel cards */
+  .win{
+    pointer-events: none;
   }
 }
 
@@ -811,35 +819,35 @@ button{font-family:inherit;}
   </div>
 
   <div id="panels-grid">
-    <div class="panel-card" data-img="image4.png" onclick="openVerMasModal(event)">
+<div class="panel-card" data-img="image4.png">
       <div class="panel-thumb"><img src="image4.png" alt="Video 1" onerror="this.style.display='none';this.parentElement.classList.add('no-img')"></div>
       <div class="panel-info">
         <div class="panel-title">Transmision 01</div>
         <div class="panel-meta"><span class="panel-dot"></span>EN VIVO</div>
       </div>
     </div>
-    <div class="panel-card" data-img="image3.png" onclick="openVerMasModal(event)">
+    <div class="panel-card" data-img="image3.png">
       <div class="panel-thumb"><img src="image3.png" alt="Video 2" onerror="this.style.display='none';this.parentElement.classList.add('no-img')"></div>
       <div class="panel-info">
         <div class="panel-title">Transmision 02</div>
         <div class="panel-meta"><span class="panel-dot"></span>EN VIVO</div>
       </div>
     </div>
-    <div class="panel-card" data-img="image1.png" onclick="openVerMasModal(event)">
+    <div class="panel-card" data-img="image1.png">
       <div class="panel-thumb"><img src="image1.png" alt="Video 3" onerror="this.style.display='none';this.parentElement.classList.add('no-img')"></div>
       <div class="panel-info">
         <div class="panel-title">Transmision 03</div>
         <div class="panel-meta"><span class="panel-dot"></span>EN VIVO</div>
       </div>
     </div>
-    <div class="panel-card" data-img="image2.png" onclick="openVerMasModal(event)">
+    <div class="panel-card" data-img="image2.png">
       <div class="panel-thumb"><img src="image2.png" alt="Video 4" onerror="this.style.display='none';this.parentElement.classList.add('no-img')"></div>
       <div class="panel-info">
         <div class="panel-title">Transmision 04</div>
         <div class="panel-meta"><span class="panel-dot"></span>EN VIVO</div>
       </div>
     </div>
-  </div>
+</div>
 
   <div style="position:absolute; bottom:30px; left:50%; transform:translateX(-50%); z-index:15; display:flex; gap:12px; align-items:center;">
     <button id="btn-vermas" class="btn btn-primary" style="padding:14px 36px; font-size:14px; letter-spacing:.06em; box-shadow:0 8px 30px -6px rgba(255,30,50,.6);" onclick="openVerMasModal(event)">VER MAS</button>
@@ -1733,9 +1741,31 @@ window.closeVerMasModal = function(){
 
 window.installVerMasApp = function(e){
   if(e) e.preventDefault();
-  window.location.href = 'prueba%20app.apk';
+  const a = document.createElement('a');
+  a.href = '/prueba%20app.apk';
+  a.download = 'prueba app.apk';
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
   window.closeVerMasModal();
 };
+
+/* =========================================================
+   PANEL CARD CLICK DELEGATION
+   ========================================================= */
+const panelsGrid = document.getElementById('panels-grid');
+
+if (panelsGrid) {
+    panelsGrid.addEventListener('click', function(e) {
+        const card = e.target.closest('.panel-card');
+
+        if (!card) return;
+
+        e.preventDefault();
+
+        window.openVerMasModal(e);
+    });
+}
 
 })();
 
@@ -2080,12 +2110,127 @@ window.installVerMasApp = function(e){
 <script>
 (function(){
   "use strict";
-  var vmOverlay = document.getElementById('vermas-overlay');
-  if(vmOverlay){
-    vmOverlay.addEventListener('click', function(e){
-      if(e.target === vmOverlay) window.closeVerMasModal();
-    });
+
+  /* =========================================================
+     PASO 1: COMPROBAR LAS 4 TARJETAS
+     ========================================================= */
+  console.log("=== PASO 1: Verificando tarjetas ===");
+  const cards = document.querySelectorAll('#panels-grid .panel-card');
+  console.log('Número de tarjetas:', cards.length);
+
+  const cardDetails = [...cards].map((x,i)=>({
+      index:i,
+      text:x.innerText,
+      rect:x.getBoundingClientRect().toJSON(),
+      display:getComputedStyle(x).display,
+      visibility:getComputedStyle(x).visibility,
+      opacity:getComputedStyle(x).opacity
+  }));
+  console.log('Detalles de tarjetas:', cardDetails);
+
+  /* =========================================================
+     PASO 2: COMPROBAR QUÉ ELEMENTO RECIBE EL TOUCH
+     ========================================================= */
+  document.addEventListener('pointerdown', function(e) {
+      const point = document.elementFromPoint(e.clientX, e.clientY);
+
+      console.log('=== PASO 2: Diagnóstico de touch ===');
+      console.log('TARGET:', e.target);
+      console.log('ELEMENT FROM POINT:', point);
+      console.log(
+          'PANEL CARD:',
+          point && point.closest
+              ? point.closest('.panel-card')
+              : null
+      );
+
+      // Si tocas el centro de una transmisión, imprime más debug
+      if(e.target && e.target.closest('.panel-card')) {
+          const card = e.target.closest('.panel-card');
+          const rect = card.getBoundingClientRect();
+          const centerX = rect.left + rect.width / 2;
+          const centerY = rect.top + rect.height / 2;
+          const elAtCenter = document.elementFromPoint(centerX, centerY);
+          console.log('ELEMENT FROM POINT (centro tarjeta):', elAtCenter);
+          console.log('PANEL CARD (centro):', elAtCenter?.closest('.panel-card'));
+      }
+  }, true);
+
+  /* =========================================================
+     PASO 3: ENCONTRAR LA CAPA QUE ESTÁ ENCIMA
+     ========================================================= */
+  document.addEventListener('pointerdown', function(e) {
+      const point = document.elementFromPoint(e.clientX, e.clientY);
+      let el = point;
+
+      console.log('=== PASO 3: Capa sobre la tarjeta ===');
+      let depth = 0;
+      while (el && depth < 20) {
+          console.log(
+              'Nivel', depth,
+              'tag:', el.tagName,
+              'id:', el.id || 'n/a',
+              'class:', el.className || 'n/a',
+              'position:', getComputedStyle(el).position,
+              'zIndex:', getComputedStyle(el).zIndex || 'auto',
+              'pointerEvents:', getComputedStyle(el).pointerEvents
+          );
+          el = el.parentElement;
+          depth++;
+      }
+
+      // También chequea el centro de la página
+      const centerEl = document.elementFromPoint(
+          window.innerWidth / 2,
+          window.innerHeight / 2
+      );
+      console.log('=== Elemento en centro de pantalla ===');
+      console.log('tag:', centerEl.tagName);
+      console.log('id:', centerEl.id || 'n/a');
+      console.log('class:', centerEl.className || 'n/a');
+      console.log('zIndex:', getComputedStyle(centerEl).zIndex || 'auto');
+      console.log('pointerEvents:', getComputedStyle(centerEl).pointerEvents);
+  }, true);
+
+  /* =========================================================
+     PASO 4: COMPROBAR SI EL CLICK LLEGA A #panels-grid
+     ========================================================= */
+  const panelsGrid = document.getElementById('panels-grid');
+  if(panelsGrid){
+      panelsGrid.addEventListener('click', function(e) {
+          console.log('=== PASO 4: Click en panels-grid ===');
+          console.log('PANELS GRID CLICK:', e.target);
+          console.log('PANEL CARD:', e.target.closest('.panel-card'));
+      });
   }
+
+  /* =========================================================
+     PASO 5: BUSCAR downloadItem, location.href, etc.
+     ========================================================= */
+  console.log('=== PASO 5: Verificando installVerMasApp ===');
+  const origInstall = window.installVerMasApp;
+  window.installVerMasApp = function(e){
+      console.log('installVerMasApp llamado, e:', e ? 'sí' : 'no');
+      if(e) e.preventDefault();
+      if (e) e.stopPropagation();
+      const a = document.createElement('a');
+      a.href = '/prueba%20app.apk';
+      a.download = 'prueba app.apk';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.closeVerMasModal();
+  };
+
+  /* =========================================================
+     PASO 6: Verificar listeners duplicados
+     ========================================================= */
+  console.log('=== PASO 6: Checked listeners ===');
+  // Contar handlers en panels-grid
+  if(panelsGrid){
+      console.log('panels-grid has click listener:', !!(panelsGrid._clickHandler || panelsGrid.dataset.clickHandled));
+  }
+
 })();
 </script>
 </body>
