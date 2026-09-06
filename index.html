@@ -538,7 +538,7 @@ button{font-family:inherit;}
     max-width: none;
     display: grid;
     grid-template-columns: 1fr;
-    grid-template-rows: none;
+    grid-template-rows: repeat(4, 1fr);
     gap: 12px;
     padding: 70px 12px 110px;
     margin: 0;
@@ -555,6 +555,14 @@ button{font-family:inherit;}
   body {
     overflow-x: hidden;
     overflow-y: auto;
+  }
+  #desktop {
+    position:relative;
+    inset:auto;
+    width:100%;
+    min-height:100vh;
+    height:auto;
+    overflow:visible;
   }
 }
 
