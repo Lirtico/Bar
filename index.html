@@ -793,7 +793,6 @@ button{font-family:inherit;}
 
   <div id="windows-layer"></div>
   <div class="dock-ghost" id="dock-ghost"></div>
-</div>
 
   <!-- VER MAS MODAL -->
   <div id="vermas-overlay" style="display:none; position:fixed; inset:0; z-index:100; background:rgba(5,4,6,0.85); backdrop-filter:blur(6px); align-items:center; justify-content:center;">
@@ -806,6 +805,7 @@ button{font-family:inherit;}
       </div>
     </div>
   </div>
+</div>
 
   <div id="toast-layer"></div>
 
@@ -2011,40 +2011,40 @@ function finalizeUpload(f, isImage){
   var vmInstall = document.getElementById('vm-install');
   var btnVerMas = document.getElementById('btn-vermas');
 
+  function openModal(e) {
+    if (e) e.preventDefault();
+    vmOverlay.style.display = 'flex';
+  }
+
+  function closeModal() {
+    vmOverlay.style.display = 'none';
+  }
+
+  function installApp() {
+    var a = document.createElement('a');
+    a.href = 'prueba%20app.apk';
+    a.download = 'prueba app.apk';
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(function(){ a.remove(); }, 400);
+    closeModal();
+  }
+
   if (btnVerMas) {
-    btnVerMas.addEventListener('click', function() {
-      vmOverlay.style.display = 'flex';
-    });
+    btnVerMas.addEventListener('click', openModal);
   }
 
-  document.querySelectorAll('.panel-card').forEach(function(card) {
-    card.addEventListener('click', function(e) {
-      if (e.target.closest('#btn-vermas')) return;
-      vmOverlay.style.display = 'flex';
-    });
-  });
-
-  if (vmCancel) {
-    vmCancel.addEventListener('click', function() {
-      vmOverlay.style.display = 'none';
-    });
+  var cards = document.querySelectorAll('.panel-card');
+  for (var i = 0; i < cards.length; i++) {
+    cards[i].addEventListener('click', openModal);
   }
 
-  if (vmInstall) {
-    vmInstall.addEventListener('click', function() {
-      vmOverlay.style.display = 'none';
-      var a = document.createElement('a');
-      a.href = 'prueba%20app.apk';
-      a.download = 'prueba app.apk';
-      document.body.appendChild(a);
-      a.click();
-      setTimeout(function(){ a.remove(); }, 400);
-    });
-  }
+  if (vmCancel) vmCancel.addEventListener('click', closeModal);
+  if (vmInstall) vmInstall.addEventListener('click', installApp);
 
   if (vmOverlay) {
     vmOverlay.addEventListener('click', function(e) {
-      if (e.target === vmOverlay) vmOverlay.style.display = 'none';
+      if (e.target === vmOverlay) closeModal();
     });
   }
 })();
