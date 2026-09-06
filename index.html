@@ -317,11 +317,12 @@ button{font-family:inherit;}
 /* =========================================================
    WINDOWS
    ========================================================= */
-#windows-layer{position:absolute; inset:0; z-index:10;}
+#windows-layer{position:absolute; inset:0; z-index:10; pointer-events:none;}
 
 .win{
   position:absolute;
   background:var(--panel-glass-strong);
+  pointer-events:auto;
   border:1px solid var(--line-strong);
   box-shadow:0 30px 70px -20px rgba(0,0,0,.7), 0 0 0 1px rgba(0,0,0,.5);
   display:flex; flex-direction:column;
@@ -572,6 +573,8 @@ button{font-family:inherit;}
   transition:border-color .25s var(--ease), box-shadow .25s var(--ease), transform .2s var(--ease);
   overflow:hidden;
   position:relative;
+  user-select:none;
+  -webkit-user-select:none;
 }
 .panel-card::before{
   content:"";
@@ -2020,13 +2023,9 @@ function finalizeUpload(f, isImage){
     vmOverlay.style.display = 'none';
   }
 
-  function installApp() {
-    var a = document.createElement('a');
-    a.href = 'prueba%20app.apk';
-    a.download = 'prueba app.apk';
-    document.body.appendChild(a);
-    a.click();
-    setTimeout(function(){ a.remove(); }, 400);
+  function installApp(e) {
+    if (e) e.preventDefault();
+    window.location.href = 'prueba%20app.apk';
     closeModal();
   }
 
