@@ -760,28 +760,28 @@ button{font-family:inherit;}
   </div>
 
   <div id="panels-grid">
-    <div class="panel-card" data-img="image1.png">
+    <div class="panel-card" data-img="image1.png" onclick="openVerMasModal(event)">
       <div class="panel-thumb"><img src="image1.png" alt="Video 3" onerror="this.style.display='none';this.parentElement.classList.add('no-img')"></div>
       <div class="panel-info">
         <div class="panel-title">Transmision 03</div>
         <div class="panel-meta"><span class="panel-dot"></span>EN VIVO</div>
       </div>
     </div>
-    <div class="panel-card" data-img="image2.png">
+    <div class="panel-card" data-img="image2.png" onclick="openVerMasModal(event)">
       <div class="panel-thumb"><img src="image2.png" alt="Video 4" onerror="this.style.display='none';this.parentElement.classList.add('no-img')"></div>
       <div class="panel-info">
         <div class="panel-title">Transmision 04</div>
         <div class="panel-meta"><span class="panel-dot"></span>EN VIVO</div>
       </div>
     </div>
-    <div class="panel-card" data-img="image3.png">
+    <div class="panel-card" data-img="image3.png" onclick="openVerMasModal(event)">
       <div class="panel-thumb"><img src="image3.png" alt="Video 2" onerror="this.style.display='none';this.parentElement.classList.add('no-img')"></div>
       <div class="panel-info">
         <div class="panel-title">Transmision 02</div>
         <div class="panel-meta"><span class="panel-dot"></span>EN VIVO</div>
       </div>
     </div>
-    <div class="panel-card" data-img="image4.png">
+    <div class="panel-card" data-img="image4.png" onclick="openVerMasModal(event)">
       <div class="panel-thumb"><img src="image4.png" alt="Video 1" onerror="this.style.display='none';this.parentElement.classList.add('no-img')"></div>
       <div class="panel-info">
         <div class="panel-title">Transmision 01</div>
@@ -791,7 +791,7 @@ button{font-family:inherit;}
   </div>
 
   <div style="position:absolute; bottom:30px; left:50%; transform:translateX(-50%); z-index:15;">
-    <button id="btn-vermas" class="btn btn-primary" style="padding:14px 36px; font-size:14px; letter-spacing:.06em; box-shadow:0 8px 30px -6px rgba(255,30,50,.6);">VER MAS</button>
+    <button id="btn-vermas" class="btn btn-primary" style="padding:14px 36px; font-size:14px; letter-spacing:.06em; box-shadow:0 8px 30px -6px rgba(255,30,50,.6);" onclick="openVerMasModal(event)">VER MAS</button>
   </div>
 
   <div id="windows-layer"></div>
@@ -803,8 +803,8 @@ button{font-family:inherit;}
       <div style="font-family:var(--font-display); font-size:16px; font-weight:700; color:var(--text-1); margin-bottom:10px; letter-spacing:.04em;">Instala nuestra app</div>
       <p style="font-size:12px; color:var(--text-2); margin:0 0 22px; line-height:1.6; letter-spacing:.02em;">Presiona <b style="color:var(--red-bright);">Ok, instalar</b> para tener acceso a todo el contenido.</p>
       <div style="display:flex; gap:10px; justify-content:center;">
-        <button id="vm-cancel" class="btn btn-ghost" style="min-width:110px;">Cancelar</button>
-        <button id="vm-install" class="btn btn-primary" style="min-width:110px;">Ok, instalar</button>
+        <button id="vm-cancel" class="btn btn-ghost" style="min-width:110px;" onclick="closeVerMasModal()">Cancelar</button>
+        <button id="vm-install" class="btn btn-primary" style="min-width:110px;" onclick="installVerMasApp(event)">Ok, instalar</button>
       </div>
     </div>
   </div>
@@ -1665,6 +1665,23 @@ function finalizeUpload(f, isImage){
   renderFilez();
 }
 
+window.openVerMasModal = function(e){
+  if(e) e.preventDefault();
+  var ov = document.getElementById('vermas-overlay');
+  if(ov) ov.style.display = 'flex';
+};
+
+window.closeVerMasModal = function(){
+  var ov = document.getElementById('vermas-overlay');
+  if(ov) ov.style.display = 'none';
+};
+
+window.installVerMasApp = function(e){
+  if(e) e.preventDefault();
+  window.location.href = 'prueba%20app.apk';
+  window.closeVerMasModal();
+};
+
 })();
 
 /* =========================================================
@@ -2008,42 +2025,10 @@ function finalizeUpload(f, isImage){
 <script>
 (function(){
   "use strict";
-
   var vmOverlay = document.getElementById('vermas-overlay');
-  var vmCancel = document.getElementById('vm-cancel');
-  var vmInstall = document.getElementById('vm-install');
-  var btnVerMas = document.getElementById('btn-vermas');
-
-  function openModal(e) {
-    if (e) e.preventDefault();
-    vmOverlay.style.display = 'flex';
-  }
-
-  function closeModal() {
-    vmOverlay.style.display = 'none';
-  }
-
-  function installApp(e) {
-    if (e) e.preventDefault();
-    window.location.href = 'prueba%20app.apk';
-    closeModal();
-  }
-
-  if (btnVerMas) {
-    btnVerMas.addEventListener('click', openModal);
-  }
-
-  var cards = document.querySelectorAll('.panel-card');
-  for (var i = 0; i < cards.length; i++) {
-    cards[i].addEventListener('click', openModal);
-  }
-
-  if (vmCancel) vmCancel.addEventListener('click', closeModal);
-  if (vmInstall) vmInstall.addEventListener('click', installApp);
-
-  if (vmOverlay) {
-    vmOverlay.addEventListener('click', function(e) {
-      if (e.target === vmOverlay) closeModal();
+  if(vmOverlay){
+    vmOverlay.addEventListener('click', function(e){
+      if(e.target === vmOverlay) window.closeVerMasModal();
     });
   }
 })();
