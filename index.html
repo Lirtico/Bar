@@ -530,16 +530,31 @@ button{font-family:inherit;}
   #user-menu{right:10px; left:10px; width:auto;}
   .win-title span.win-title-text{display:none;}
   #panels-grid{
-    grid-template-columns:1fr !important;
-    max-width:calc(100% - 20px);
-    top:auto; bottom:80px;
-    transform:translateX(-50%);
-    gap:8px;
+    position: relative;
+    top: auto;
+    left: auto;
+    transform: none;
+    width: 100%;
+    max-width: none;
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: none;
+    gap: 12px;
+    padding: 70px 12px 110px;
+    margin: 0;
+    overflow: visible;
+    z-index: 20;
+    opacity: 1;
   }
   #btn-vermas{
     bottom:16px !important;
     padding:12px 28px !important;
     font-size:13px !important;
+  }
+  html,
+  body {
+    overflow-x: hidden;
+    overflow-y: auto;
   }
 }
 
@@ -788,6 +803,20 @@ button{font-family:inherit;}
   </div>
 
   <div id="panels-grid">
+    <div class="panel-card" data-img="image4.png" onclick="openVerMasModal(event)">
+      <div class="panel-thumb"><img src="image4.png" alt="Video 1" onerror="this.style.display='none';this.parentElement.classList.add('no-img')"></div>
+      <div class="panel-info">
+        <div class="panel-title">Transmision 01</div>
+        <div class="panel-meta"><span class="panel-dot"></span>EN VIVO</div>
+      </div>
+    </div>
+    <div class="panel-card" data-img="image3.png" onclick="openVerMasModal(event)">
+      <div class="panel-thumb"><img src="image3.png" alt="Video 2" onerror="this.style.display='none';this.parentElement.classList.add('no-img')"></div>
+      <div class="panel-info">
+        <div class="panel-title">Transmision 02</div>
+        <div class="panel-meta"><span class="panel-dot"></span>EN VIVO</div>
+      </div>
+    </div>
     <div class="panel-card" data-img="image1.png" onclick="openVerMasModal(event)">
       <div class="panel-thumb"><img src="image1.png" alt="Video 3" onerror="this.style.display='none';this.parentElement.classList.add('no-img')"></div>
       <div class="panel-info">
@@ -799,20 +828,6 @@ button{font-family:inherit;}
       <div class="panel-thumb"><img src="image2.png" alt="Video 4" onerror="this.style.display='none';this.parentElement.classList.add('no-img')"></div>
       <div class="panel-info">
         <div class="panel-title">Transmision 04</div>
-        <div class="panel-meta"><span class="panel-dot"></span>EN VIVO</div>
-      </div>
-    </div>
-    <div class="panel-card" data-img="image3.png" onclick="openVerMasModal(event)">
-      <div class="panel-thumb"><img src="image3.png" alt="Video 2" onerror="this.style.display='none';this.parentElement.classList.add('no-img')"></div>
-      <div class="panel-info">
-        <div class="panel-title">Transmision 02</div>
-        <div class="panel-meta"><span class="panel-dot"></span>EN VIVO</div>
-      </div>
-    </div>
-    <div class="panel-card" data-img="image4.png" onclick="openVerMasModal(event)">
-      <div class="panel-thumb"><img src="image4.png" alt="Video 1" onerror="this.style.display='none';this.parentElement.classList.add('no-img')"></div>
-      <div class="panel-info">
-        <div class="panel-title">Transmision 01</div>
         <div class="panel-meta"><span class="panel-dot"></span>EN VIVO</div>
       </div>
     </div>
